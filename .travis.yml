@@ -1,0 +1,17 @@
+sudo: required
+services:
+    - docker
+language: java
+
+deploy:
+    provider: elasticbeanstalk
+    region: "ap-south-1"
+    app: "Dashbook-Parent"
+    env: "DashbookParent-env"
+    bucket_name: "elasticbeanstalk-ap-south-1-161935811067"
+    bucket_path: "Dashbook-Parent"
+    edge: true
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
