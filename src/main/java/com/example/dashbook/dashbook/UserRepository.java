@@ -1,0 +1,10 @@
+package com.example.dashbook.dashbook;
+
+import com.example.dashbook.dashbook.entity.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Integer> {
+
+}
