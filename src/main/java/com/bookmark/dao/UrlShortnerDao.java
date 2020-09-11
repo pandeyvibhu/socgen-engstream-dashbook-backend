@@ -13,7 +13,7 @@ public class UrlShortnerDao {
     DSLContext context;
 
     public UrlDetail insertShortUrl(UrlDetail url, String shortUrl) {
-        return newUrlDetail =  context.insertInto(Tables.URL_DETAIL,
+        return context.insertInto(Tables.URL_DETAIL,
                 Tables.URL_DETAIL.URL,Tables.URL_DETAIL.SHORT_URL,
                 Tables.URL_DETAIL.EXPIRATION_TIME, Tables.URL_DETAIL.CREATION_TIME)
                 .values(url.getUrl(), shortUrl, url.getExpirationTime(), url.getCreationTime())
