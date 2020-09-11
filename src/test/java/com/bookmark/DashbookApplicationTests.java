@@ -1,4 +1,4 @@
-package com.example.dashbook.bookmark;
+package com.bookmark;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
