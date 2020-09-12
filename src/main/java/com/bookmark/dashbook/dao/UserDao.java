@@ -22,7 +22,7 @@ public class UserDao extends DAOImpl<UserRecord, User, Integer> {
     }
 
     public User findUserByUsername(String username) {
-        return  context
+        return context
                 .selectFrom(Tables.USER)
                 .where(Tables.USER.USERNAME.eq(username))
                 .limit(1)
@@ -38,6 +38,6 @@ public class UserDao extends DAOImpl<UserRecord, User, Integer> {
 
     @Override
     public Integer getId(User user) {
-        return null;
+        return user.getId();
     }
 }

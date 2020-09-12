@@ -24,20 +24,6 @@ public class CardController {
     @Autowired
     UrlShortenerService urlShortenerService;
 
-    @PostMapping(value = "/create")
-    public ResponseEntity<CardDetailResponseDto> createCard(@RequestBody CardDetailRequestDto cardDetailDto) {
-        Card card = cardMapper.mapCardDto(cardDetailDto);
-        UrlDetail urlDetail = urlShortenerService.saveUrl(cardMapper.map(cardDetailDto));
-        //TODO --Compute the CARD Group status
-        return ResponseEntity.ok(cardMapper.mapCardDetail(cardService.createCard(card, urlDetail)));
-    }
-
-    @PostMapping(value = "/modify")
-    public ResponseEntity<CardDetailResponseDto> modifyCard(@RequestBody ModifiedCardRequestDto modifyCardRequestDto) {
-        Card card = cardMapper.mapModifiedCardDto(modifyCardRequestDto);
-        return ResponseEntity.ok(cardMapper.mapCardDetail(cardService.modifyCard(card)));
-    }
-
     @GetMapping(value = "/group/{groupId}")
     public ResponseEntity<CardDetailResponseListDto> getCardDetailsByGroupId(@PathVariable final int groupId) {
         CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
@@ -58,4 +44,27 @@ public class CardController {
         cardDetailResponseListDto.setCardListDTO(cardService.getFavoriteCards());
         return ResponseEntity.ok(cardDetailResponseListDto);
     }
+
+    @PostMapping(value = "/create")
+    public ResponseEntity<CardDetailResponseDto> createCard(@RequestBody CardDetailRequestDto cardDetailDto) {
+        Card card = cardMapper.mapCardDto(cardDetailDto);
+        boolean favorite = cardDetailDto.getFavorite();
+        UrlDetail urlDetail = urlShortenerService.saveUrl(cardMapper.map(cardDetailDto));
+        //TODO --Compute the CARD Group status
+        return ResponseEntity.ok(cardMapper.mapCardDetail(cardService.createCard(card, urlDetail, favorite)));
+    }
+
+    @PostMapping(value = "/modify")
+    public ResponseEntity<CardDetailResponseDto> modifyCard(@RequestBody ModifiedCardRequestDto modifyCardRequestDto) {
+        Card card = cardMapper.mapModifiedCardDto(modifyCardRequestDto);
+        boolean favorite = modifyCardRequestDto.getFavorite();
+        return ResponseEntity.ok(cardMapper.mapCardDetail(cardService.modifyCard(card, favorite)));
+    }
+
+    @DeleteMapping("/card/{id}")
+    public ResponseEntity<String> deleteCard(int id) {
+        cardService.deleteCard(id);
+        return ResponseEntity.ok("Card deleted");
+    }
+
 }

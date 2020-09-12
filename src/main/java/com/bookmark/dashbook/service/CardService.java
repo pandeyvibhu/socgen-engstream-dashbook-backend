@@ -6,6 +6,7 @@ import com.bookmark.dashbook.mapper.CardMapper;
 import com.bookmark.dashbook.model.CardDetail;
 import com.bookmark.dashbook.model.dto.CardDetailResponseDto;
 import com.dashbook.bookmark.jooq.model.tables.pojos.Card;
+import com.dashbook.bookmark.jooq.model.tables.pojos.Favorites;
 import com.dashbook.bookmark.jooq.model.tables.pojos.UrlDetail;
 import com.dashbook.bookmark.jooq.model.tables.pojos.User;
 import org.mapstruct.factory.Mappers;
@@ -17,33 +18,58 @@ import java.util.List;
 @Service
 public class CardService {
 
+    private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
     @Autowired
     MyUserDetailsService userDetailsService;
-
     @Autowired
     CardDao cardDao;
-
     @Autowired
     UrlShortnerDao urlShortenerDao;
 
-    private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
+    public List<CardDetailResponseDto> getCardsByGroupId(int groupId) {
+        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getCardsByGroupId(groupId)));
+    }
 
-    public CardDetail createCard(Card card, UrlDetail urlDetail) {
+    public List<CardDetailResponseDto> getCardsCreatedByUser() {
+        User user = userDetailsService.getCurrentUserDetails();
+        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getCardsByCreatorId(user.getId())));
+    }
+
+    public List<CardDetailResponseDto> getFavoriteCards() {
+        User user = userDetailsService.getCurrentUserDetails();
+        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getFavoriteCards(user.getId())));
+    }
+
+    private List<CardDetail> appendFavoriteInfoToCardDetail(List<CardDetail> cardDetailList) {
+        cardDetailList.stream().forEach(cardDetail -> {
+            User user = userDetailsService.getCurrentUserDetails();
+            cardDetail.setFavorite(cardDao.isFavoriteCard(user.getId(), cardDetail.getId()));
+        });
+
+        return cardDetailList;
+    }
+
+    public CardDetail createCard(Card card, UrlDetail urlDetail, boolean favorite) {
 
         User user = userDetailsService.getCurrentUserDetails();
         card.setUrlDetailId(urlDetail.getId());
         card.setCreator(user.getId());
-        card =  cardDao.create(card);
+        card = cardDao.create(card);
 
-        CardDetail cardDetail  =  cardMapper.mapCard(card);
+        CardDetail cardDetail = cardMapper.mapCard(card);
         cardDetail.setShortUrl(urlDetail.getShortUrl());
         cardDetail.setUrl(urlDetail.getUrl());
+
+        if(favorite) {
+            markFavorite(user.getId(), card.getId());
+        }
 
         return cardDetail;
     }
 
-    public CardDetail modifyCard(Card card) {
+    public CardDetail modifyCard(Card card, boolean favorite) {
         int urlDetailId = cardDao.findById(card.getId()).getUrlDetailId();
+        User user = userDetailsService.getCurrentUserDetails();
         UrlDetail urlDetail = urlShortenerDao.findById(urlDetailId);
 
         cardDao.update(card);
@@ -51,20 +77,23 @@ public class CardService {
         cardDetail.setUrl(urlDetail.getUrl());
         cardDetail.setShortUrl(urlDetail.getShortUrl());
 
+        if(favorite) {
+            markFavorite(user.getId(), card.getId());
+        } else {
+            cardDao.unmarkFavorite(user.getId(), card.getId());
+        }
+        cardDetail.setFavorite(favorite);
         return cardDetail;
     }
 
-    public List<CardDetailResponseDto> getCardsByGroupId(int groupId) {
-        return cardMapper.map(cardDao.getCardsByGroupId(groupId));
+    private void markFavorite(int userId, int cardId) {
+        Favorites favorites = new Favorites();
+        favorites.setUserId(userId);
+        favorites.setCardId(cardId);
+        cardDao.upsertFavorite(favorites);
     }
 
-    public List<CardDetailResponseDto> getCardsCreatedByUser() {
-        User user = userDetailsService.getCurrentUserDetails();
-        return cardMapper.map(cardDao.getCardsByCreatorId(user.getId()));
-    }
-
-    public List<CardDetailResponseDto> getFavoriteCards() {
-        User user = userDetailsService.getCurrentUserDetails();
-        return cardMapper.map(cardDao.getFavoriteCards(user.getId()));
+    public void deleteCard(int cardId) {
+        cardDao.deleteCard(cardId);
     }
 }

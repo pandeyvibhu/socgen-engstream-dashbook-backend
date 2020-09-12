@@ -10,5 +10,6 @@ public class CardDetailResponseDto {
     private String title;
     private String status;
     private Integer groupId;
+    private Boolean favorite;
     private byte[]  icon;
 }

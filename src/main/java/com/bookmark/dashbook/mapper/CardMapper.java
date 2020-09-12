@@ -14,12 +14,15 @@ import java.util.List;
 public interface CardMapper {
 
     CardDetail mapCard(Card card);
+
     UrlDetail map(CardDetailRequestDto cardDetailDto);
 
     Card mapCardDto(CardDetailRequestDto cardDetailDto);
+
     Card mapModifiedCardDto(ModifiedCardRequestDto modifiedCardRequestDto);
 
     CardDetailResponseDto mapCardDetail(CardDetail cardDetail);
+
     List<CardDetailResponseDto> map(List<CardDetail> cardDetailList);
 
 }

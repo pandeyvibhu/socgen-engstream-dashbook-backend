@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS USER (
     lastname    VARCHAR(255),
     email       VARCHAR(255),
 
+    UNIQUE(username),
     PRIMARY KEY (id)
 );
 
@@ -24,8 +25,9 @@ CREATE TABLE IF NOT EXISTS GROUP_CONTEXT (
    title			VARCHAR(255) NOT NULL,
    group_type		VARCHAR(255) NOT NULL,
    creator          INT NOT NULL,
-   descripition		VARCHAR(255),
+   description		VARCHAR(255),
 
+   UNIQUE(title),
    PRIMARY KEY(id),
    FOREIGN KEY(creator) REFERENCES USER(id)
 );
@@ -34,10 +36,9 @@ CREATE TABLE IF NOT EXISTS GROUP_ADMIN (
    id				INT AUTO_INCREMENT,
    group_id			INT NOT NULL,
    user_id			INT NOT NULL,
-   status			VARCHAR(32) NOT NULL,
 
    PRIMARY KEY(id),
-   FOREIGN KEY(user_id) REFERENCES GROUP_CONTEXT(id),
+   FOREIGN KEY(user_id) REFERENCES USER(id),
    FOREIGN KEY(group_id) REFERENCES GROUP_CONTEXT(id)
 );
 
