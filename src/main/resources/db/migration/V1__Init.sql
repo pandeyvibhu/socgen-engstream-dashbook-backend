@@ -46,9 +46,10 @@ CREATE TABLE IF NOT EXISTS CARD (
    url_detail_id	INT NOT NULL,
    group_id         INT NOT NULL,
    creator			INT NOT NULL,
+   creation_date    DATETIME NOT NULL,
    title			VARCHAR(32) NOT NULL,
    status			VARCHAR(32) NOT NULL,
-   descripition		VARCHAR(255),
+   description		VARCHAR(255),
    icon				BLOB,
 
    PRIMARY KEY(id),

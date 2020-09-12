@@ -1,5 +1,6 @@
 package com.bookmark.dashbook.service;
 
+import com.bookmark.dashbook.dao.UserDao;
 import com.dashbook.bookmark.jooq.model.Tables;
 import com.dashbook.bookmark.jooq.model.tables.pojos.User;
 import org.jooq.DSLContext;
@@ -17,11 +18,10 @@ import java.util.Optional;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    DSLContext context;
+    UserDao userDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // TODO Auto-generated method stub
         Optional<User> user = Optional.ofNullable(this.findUserByUsername(username));
         user.orElseThrow(() -> new UsernameNotFoundException("Not Found: " + username));
         return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), new ArrayList<>());
@@ -39,18 +39,11 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     public User findUserByUsername(String username) {
-        return  context
-                .selectFrom(Tables.USER)
-                .where(Tables.USER.USERNAME.eq(username))
-                .limit(1)
-                .fetchOneInto(User.class);
+        return userDao.findUserByUsername(username);
     }
 
     public void signupUser(User user) {
-        context.insertInto(Tables.USER, Tables.USER.FIRSTNAME, Tables.USER.LASTNAME,
-                Tables.USER.EMAIL, Tables.USER.USERNAME, Tables.USER.PASSWORD)
-                .values(user.getFirstname(), user.getLastname(), user.getEmail(), user.getUsername(), user.getPassword())
-                .execute();
+        userDao.save(user);
     }
 
 }
