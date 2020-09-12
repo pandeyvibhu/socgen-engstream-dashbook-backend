@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/card")
+@RequestMapping("/cards")
 public class CardController {
 
     private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
@@ -24,14 +24,14 @@ public class CardController {
     @Autowired
     UrlShortenerService urlShortenerService;
 
-    @GetMapping(value = "/group/{groupId}")
+    @GetMapping(value = "/groups/{groupId}")
     public ResponseEntity<CardDetailResponseListDto> getCardDetailsByGroupId(@PathVariable final int groupId) {
         CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
         cardDetailResponseListDto.setCardListDTO(cardService.getCardsByGroupId(groupId));
         return ResponseEntity.ok(cardDetailResponseListDto);
     }
 
-    @GetMapping(value = "/created")
+    @GetMapping(value = "/user-created")
     public ResponseEntity<CardDetailResponseListDto> getCardsCreatedByUser() {
         CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
         cardDetailResponseListDto.setCardListDTO(cardService.getCardsCreatedByUser());
@@ -61,7 +61,7 @@ public class CardController {
         return ResponseEntity.ok(cardMapper.mapCardDetail(cardService.modifyCard(card, favorite)));
     }
 
-    @DeleteMapping("/card/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCard(int id) {
         cardService.deleteCard(id);
         return ResponseEntity.ok("Card deleted");

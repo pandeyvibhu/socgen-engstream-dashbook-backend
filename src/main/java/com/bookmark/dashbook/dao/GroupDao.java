@@ -7,6 +7,8 @@ import org.jooq.impl.DAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import static com.dashbook.bookmark.jooq.model.Tables.FAVORITES;
+import static com.dashbook.bookmark.jooq.model.Tables.GROUP_ADMIN;
 import static com.dashbook.bookmark.jooq.model.tables.GroupContext.GROUP_CONTEXT;
 
 @Repository
@@ -37,5 +39,12 @@ public class GroupDao extends DAOImpl<GroupContextRecord, GroupContext, Integer>
     @Override
     public Integer getId(GroupContext groupContext) {
         return groupContext.getId();
+    }
+
+    public Boolean checkGroupAdmin(int userId, int groupId) {
+        return context.fetchExists(
+                context.selectFrom(GROUP_ADMIN)
+                        .where(GROUP_ADMIN.USER_ID.eq(userId))
+                        .and(GROUP_ADMIN.GROUP_ID.eq(groupId)));
     }
 }

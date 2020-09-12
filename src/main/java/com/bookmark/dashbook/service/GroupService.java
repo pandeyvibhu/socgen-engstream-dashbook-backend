@@ -26,6 +26,10 @@ public class GroupService {
         return groupDao.findAll();
     }
 
+    public GroupContext findGroupById(int groupId) {
+        return groupDao.findById(groupId);
+    }
+
     public GroupContext saveGroup(GroupContext group) {
         User user = userDetailsService.getCurrentUserDetails();
         group.setCreator(user.getId());
@@ -40,6 +44,11 @@ public class GroupService {
 
     public GroupAdmin saveAdmin(GroupAdmin groupAdmin) {
         return groupAdminDao.upsert(groupAdmin);
+    }
+
+    public Boolean checkAdmin(int groupId) {
+        User user = userDetailsService.getCurrentUserDetails();
+        return groupDao.checkGroupAdmin(user.getId(), groupId);
     }
 
     public void deleteGroup(int groupId) {

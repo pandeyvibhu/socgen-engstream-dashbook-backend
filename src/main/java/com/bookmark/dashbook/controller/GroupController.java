@@ -11,30 +11,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/group")
+@RequestMapping("/groups")
 public class GroupController {
 
     private final GroupMapper groupMapper = Mappers.getMapper(GroupMapper.class);
     @Autowired
     GroupService groupService;
 
-    @GetMapping("findAll")
+    @GetMapping("")
     public ResponseEntity<GroupContextResponseListDto> getAllGroups() {
         GroupContextResponseListDto groupContextResponseListDto = new GroupContextResponseListDto();
         groupContextResponseListDto.setGroupContextResponseDtoList(groupMapper.map(groupService.findAllGroups()));
         return ResponseEntity.ok(groupContextResponseListDto);
     }
 
-    @PostMapping(value = "/saveGroup")
+    @GetMapping("/{id}")
+    public ResponseEntity<GroupContextResponseDto> getGroupById(@PathVariable int id) {
+        return ResponseEntity.ok(groupMapper.map(groupService.findGroupById(id)));
+    }
+
+    @GetMapping("checkAdmin")
+    public ResponseEntity<GroupAdminPriviligeDto> checkAdmin(@RequestParam(value = "groupId", required = true) int groupId) {
+        GroupAdminPriviligeDto groupAdminPriviligeDto = new GroupAdminPriviligeDto();
+        groupAdminPriviligeDto.setIsGroupAdmin(groupService.checkAdmin(groupId));
+        return ResponseEntity.ok(groupAdminPriviligeDto);
+    }
+
+    @PostMapping(value = "/save")
     public ResponseEntity<GroupContextResponseDto> saveGroup(@RequestBody GroupContextRequestDto groupContextRequestDto) {
         GroupContext groupContext = groupService.saveGroup(groupMapper.map(groupContextRequestDto));
         return ResponseEntity.ok(groupMapper.map(groupContext));
-    }
-
-    @DeleteMapping("/context{id}")
-    public ResponseEntity<String> deleteGroup(@PathVariable int id) {
-        groupService.deleteGroup(id);
-        return ResponseEntity.ok("Card deleted");
     }
 
     @PostMapping("/admin/add")
@@ -43,11 +49,15 @@ public class GroupController {
         return ResponseEntity.ok(groupMapper.map(groupAdmin));
     }
 
-    @DeleteMapping("/admin{id}")
+    @DeleteMapping("/delete-context{id}")
+    public ResponseEntity<String> deleteGroup(@PathVariable int id) {
+        groupService.deleteGroup(id);
+        return ResponseEntity.ok("Card deleted");
+    }
+
+    @DeleteMapping("/delete-admin{id}")
     public ResponseEntity<String> deleteGroupAdmin(@PathVariable int id) {
         groupService.deleteGroupAdmin(id);
         return ResponseEntity.ok("Card deleted");
     }
-
-
 }
