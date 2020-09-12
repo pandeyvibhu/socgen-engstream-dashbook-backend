@@ -2,8 +2,6 @@ package com.bookmark.dashbook.model.dto;
 
 import lombok.Data;
 
-import java.sql.Blob;
-
 @Data
 public class CardDetailResponseDto {
     private String url;
@@ -12,5 +10,5 @@ public class CardDetailResponseDto {
     private String title;
     private String status;
     private Integer groupId;
-    private Blob image;
+    private byte[]  icon;
 }

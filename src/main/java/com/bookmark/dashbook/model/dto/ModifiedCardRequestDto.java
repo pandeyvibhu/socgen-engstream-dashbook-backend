@@ -1,13 +1,10 @@
-package com.bookmark.dashbook.model;
+package com.bookmark.dashbook.model.dto;
 
 import lombok.Data;
 
 @Data
-public class CardDetail {
-    //url details field
-    private String url;
-    private String shortUrl;
-    //Card fields
+public class ModifiedCardRequestDto {
+    private Integer id;
     private String description;
     private String title;
     private String status;
