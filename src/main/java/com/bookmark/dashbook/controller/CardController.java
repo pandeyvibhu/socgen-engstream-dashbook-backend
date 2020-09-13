@@ -22,6 +22,7 @@ import java.util.List;
 public class CardController {
 
     private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
+
     @Autowired
     CardService cardService;
     @Autowired

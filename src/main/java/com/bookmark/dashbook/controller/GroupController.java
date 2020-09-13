@@ -1,7 +1,9 @@
 package com.bookmark.dashbook.controller;
 
+import com.bookmark.dashbook.mapper.CardMapper;
 import com.bookmark.dashbook.mapper.GroupMapper;
 import com.bookmark.dashbook.model.dto.*;
+import com.bookmark.dashbook.service.CardService;
 import com.bookmark.dashbook.service.GroupService;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
@@ -15,8 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class GroupController {
 
     private final GroupMapper groupMapper = Mappers.getMapper(GroupMapper.class);
+    private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
+
     @Autowired
     GroupService groupService;
+
+    @Autowired
+    CardService cardService;
 
     @GetMapping("/all")
     public ResponseEntity<GroupContextResponseListDto> getAllGroups() {
@@ -25,12 +32,19 @@ public class GroupController {
         return ResponseEntity.ok(groupContextResponseListDto);
     }
 
-    @GetMapping("/group/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<GroupContextResponseDto> getGroupById(@PathVariable int id) {
         return ResponseEntity.ok(groupMapper.map(groupService.findGroupById(id)));
     }
 
-    @GetMapping("/admins/{groupId}")
+    @GetMapping(value = "/{groupId}/cards")
+    public ResponseEntity<CardDetailResponseListDto> getCardDetailsByGroupId(@PathVariable final int groupId) {
+        CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
+        cardDetailResponseListDto.setCardListDTO(cardMapper.map(cardService.getCardsByGroupId(groupId)));
+        return ResponseEntity.ok(cardDetailResponseListDto);
+    }
+
+    @GetMapping("/{groupId}/admins")
     public ResponseEntity<GroupAdminResponseDtoList> findGroupAdmins(@PathVariable int groupId) {
         GroupAdminResponseDtoList groupAdminResponseDtoList = new GroupAdminResponseDtoList();
         groupAdminResponseDtoList.setGroupAdminResponseDtoList(groupMapper.mapAdmin(groupService.findAdminsByGroupID(groupId)));
@@ -63,7 +77,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/delete-admin{id}")
-    public ResponseEntity<String> deleteGroupAdmin(@PathVariable int id) {
+    ResponseEntity<String> deleteGroupAdmin(@PathVariable int id) {
         groupService.deleteGroupAdmin(id);
         return ResponseEntity.ok("Card deleted");
     }
