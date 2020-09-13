@@ -22,6 +22,6 @@ public interface GroupMapper {
 
     List<GroupContextResponseDto> map(List<GroupContext> groupContextList);
 
-    List<GroupAdminResponseDto> mapAdmin(List<GroupAdminResponseDto> groupAdminResponseDtoList);
+    List<GroupAdminResponseDto> mapAdmin(List<GroupAdmin> groupAdmins);
 
 }

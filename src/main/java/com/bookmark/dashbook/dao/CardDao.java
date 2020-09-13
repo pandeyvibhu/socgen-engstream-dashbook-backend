@@ -28,15 +28,13 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
         this.context = context;
     }
 
-    public Card create(Card card) {
-        return context.insertInto(Tables.CARD,
-                Tables.CARD.CREATOR, Tables.CARD.TITLE, Tables.CARD.DESCRIPTION, Tables.CARD.STATUS,
-                Tables.CARD.URL_DETAIL_ID, Tables.CARD.CREATION_DATE, Tables.CARD.GROUP_ID, Tables.CARD.ICON)
-                .values(card.getCreator(), card.getTitle(), card.getDescription(), card.getStatus(),
-                        card.getUrlDetailId(), LocalDateTime.now(), card.getGroupId(), card.getIcon())
-                .returning(CARD.ID, CARD.URL_DETAIL_ID, CARD.GROUP_ID, CARD.TITLE, CARD.DESCRIPTION, CARD.ICON, CARD.STATUS)
-                .fetchOne()
-                .into(Card.class);
+    public List<CardDetail> findAllCards() {
+        return context.select(
+                Tables.CARD.ID, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
+                Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
+                .from(Tables.CARD)
+                .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))
+                .fetchInto(CardDetail.class);
     }
 
     public List<CardDetail> getCardsByGroupId(int groupId) {
@@ -70,6 +68,17 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
                 .fetchInto(CardDetail.class);
     }
 
+    public Card create(Card card) {
+        return context.insertInto(Tables.CARD,
+                Tables.CARD.CREATOR, Tables.CARD.TITLE, Tables.CARD.DESCRIPTION, Tables.CARD.STATUS,
+                Tables.CARD.URL_DETAIL_ID, Tables.CARD.CREATION_DATE, Tables.CARD.GROUP_ID, Tables.CARD.ICON)
+                .values(card.getCreator(), card.getTitle(), card.getDescription(), card.getStatus(),
+                        card.getUrlDetailId(), LocalDateTime.now(), card.getGroupId(), card.getIcon())
+                .returning(CARD.ID, CARD.URL_DETAIL_ID, CARD.GROUP_ID, CARD.TITLE, CARD.DESCRIPTION, CARD.ICON, CARD.STATUS)
+                .fetchOne()
+                .into(Card.class);
+    }
+
     public void deleteCard(int cardId) {
         Card card = findById(cardId);
         if (card != null) {
@@ -81,7 +90,6 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
                     .execute();
             delete(card);
         }
-
     }
 
     @Override
@@ -89,12 +97,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
         return card.getId();
     }
 
-    public void unmarkFavorite(int userId, int cardId) {
-        context.deleteFrom(FAVORITES)
-                .where(FAVORITES.USER_ID.eq(userId).and(FAVORITES.CARD_ID.eq(cardId)))
-                .execute();
-    }
-
+    //Queries on FAVORITE table for user favorite cards
     public boolean isFavoriteCard(int userId, int cardId) {
         return context.fetchExists(
                 context.selectFrom(FAVORITES)
@@ -110,4 +113,11 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
                 .onConflict(FAVORITES.CARD_ID, FAVORITES.USER_ID)
                 .doUpdate();
     }
+
+    public void deleteFavorite(int userId, int cardId) {
+        context.deleteFrom(FAVORITES)
+                .where(FAVORITES.USER_ID.eq(userId).and(FAVORITES.CARD_ID.eq(cardId)))
+                .execute();
+    }
+
 }

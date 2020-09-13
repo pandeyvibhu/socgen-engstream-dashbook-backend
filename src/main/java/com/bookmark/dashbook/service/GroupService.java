@@ -2,6 +2,7 @@ package com.bookmark.dashbook.service;
 
 import com.bookmark.dashbook.dao.GroupAdminDao;
 import com.bookmark.dashbook.dao.GroupDao;
+import com.bookmark.dashbook.model.dto.GroupAdminResponseDto;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
 import com.dashbook.bookmark.jooq.model.tables.pojos.User;
@@ -28,6 +29,10 @@ public class GroupService {
 
     public GroupContext findGroupById(int groupId) {
         return groupDao.findById(groupId);
+    }
+
+    public List<GroupAdmin> findAdminsByGroupID(int groupId) {
+        return groupDao.findAdminsByGroupId(groupId);
     }
 
     public GroupContext saveGroup(GroupContext group) {
@@ -59,5 +64,6 @@ public class GroupService {
     public void deleteGroupAdmin(int id) {
         groupAdminDao.deleteById(id);
     }
+
 }
 

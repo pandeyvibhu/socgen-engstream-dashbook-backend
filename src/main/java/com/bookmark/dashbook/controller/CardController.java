@@ -1,6 +1,7 @@
 package com.bookmark.dashbook.controller;
 
 import com.bookmark.dashbook.mapper.CardMapper;
+import com.bookmark.dashbook.model.CardDetail;
 import com.bookmark.dashbook.model.dto.CardDetailRequestDto;
 import com.bookmark.dashbook.model.dto.CardDetailResponseDto;
 import com.bookmark.dashbook.model.dto.CardDetailResponseListDto;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/cards")
 public class CardController {
@@ -24,25 +27,24 @@ public class CardController {
     @Autowired
     UrlShortenerService urlShortenerService;
 
+    @GetMapping("/all")
+    public ResponseEntity<CardDetailResponseListDto> findAllCards() {
+        return ResponseEntity.ok(getResponseListDtoFromDetailList(cardService.findAll()));
+    }
+
     @GetMapping(value = "/groups/{groupId}")
     public ResponseEntity<CardDetailResponseListDto> getCardDetailsByGroupId(@PathVariable final int groupId) {
-        CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
-        cardDetailResponseListDto.setCardListDTO(cardService.getCardsByGroupId(groupId));
-        return ResponseEntity.ok(cardDetailResponseListDto);
+        return ResponseEntity.ok(getResponseListDtoFromDetailList(cardService.getCardsByGroupId(groupId)));
     }
 
     @GetMapping(value = "/user-created")
     public ResponseEntity<CardDetailResponseListDto> getCardsCreatedByUser() {
-        CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
-        cardDetailResponseListDto.setCardListDTO(cardService.getCardsCreatedByUser());
-        return ResponseEntity.ok(cardDetailResponseListDto);
+        return ResponseEntity.ok(getResponseListDtoFromDetailList(cardService.getCardsCreatedByUser()));
     }
 
     @GetMapping(value = "/favorites")
     public ResponseEntity<CardDetailResponseListDto> getFavoriteCards() {
-        CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
-        cardDetailResponseListDto.setCardListDTO(cardService.getFavoriteCards());
-        return ResponseEntity.ok(cardDetailResponseListDto);
+        return ResponseEntity.ok(getResponseListDtoFromDetailList(cardService.getFavoriteCards()));
     }
 
     @PostMapping(value = "/create")
@@ -67,4 +69,9 @@ public class CardController {
         return ResponseEntity.ok("Card deleted");
     }
 
+    private CardDetailResponseListDto getResponseListDtoFromDetailList(List<CardDetail> cardDetailList) {
+        CardDetailResponseListDto cardDetailResponseListDto = new CardDetailResponseListDto();
+        cardDetailResponseListDto.setCardListDTO(cardMapper.map(cardDetailList));
+        return cardDetailResponseListDto;
+    }
 }

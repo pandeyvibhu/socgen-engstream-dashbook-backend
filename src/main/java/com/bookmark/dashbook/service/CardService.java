@@ -4,7 +4,6 @@ import com.bookmark.dashbook.dao.CardDao;
 import com.bookmark.dashbook.dao.UrlShortnerDao;
 import com.bookmark.dashbook.mapper.CardMapper;
 import com.bookmark.dashbook.model.CardDetail;
-import com.bookmark.dashbook.model.dto.CardDetailResponseDto;
 import com.dashbook.bookmark.jooq.model.tables.pojos.Card;
 import com.dashbook.bookmark.jooq.model.tables.pojos.Favorites;
 import com.dashbook.bookmark.jooq.model.tables.pojos.UrlDetail;
@@ -26,18 +25,22 @@ public class CardService {
     @Autowired
     UrlShortnerDao urlShortenerDao;
 
-    public List<CardDetailResponseDto> getCardsByGroupId(int groupId) {
-        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getCardsByGroupId(groupId)));
+    public List<CardDetail> findAll() {
+        return (appendFavoriteInfoToCardDetail(cardDao.findAllCards()));
     }
 
-    public List<CardDetailResponseDto> getCardsCreatedByUser() {
-        User user = userDetailsService.getCurrentUserDetails();
-        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getCardsByCreatorId(user.getId())));
+    public List<CardDetail> getCardsByGroupId(int groupId) {
+        return (appendFavoriteInfoToCardDetail(cardDao.getCardsByGroupId(groupId)));
     }
 
-    public List<CardDetailResponseDto> getFavoriteCards() {
+    public List<CardDetail> getCardsCreatedByUser() {
         User user = userDetailsService.getCurrentUserDetails();
-        return cardMapper.map(appendFavoriteInfoToCardDetail(cardDao.getFavoriteCards(user.getId())));
+        return appendFavoriteInfoToCardDetail(cardDao.getCardsByCreatorId(user.getId()));
+    }
+
+    public List<CardDetail> getFavoriteCards() {
+        User user = userDetailsService.getCurrentUserDetails();
+        return appendFavoriteInfoToCardDetail(cardDao.getFavoriteCards(user.getId()));
     }
 
     private List<CardDetail> appendFavoriteInfoToCardDetail(List<CardDetail> cardDetailList) {
@@ -45,12 +48,10 @@ public class CardService {
             User user = userDetailsService.getCurrentUserDetails();
             cardDetail.setFavorite(cardDao.isFavoriteCard(user.getId(), cardDetail.getId()));
         });
-
         return cardDetailList;
     }
 
     public CardDetail createCard(Card card, UrlDetail urlDetail, boolean favorite) {
-
         User user = userDetailsService.getCurrentUserDetails();
         card.setUrlDetailId(urlDetail.getId());
         card.setCreator(user.getId());
@@ -60,7 +61,7 @@ public class CardService {
         cardDetail.setShortUrl(urlDetail.getShortUrl());
         cardDetail.setUrl(urlDetail.getUrl());
 
-        if(favorite) {
+        if (favorite) {
             markFavorite(user.getId(), card.getId());
         }
 
@@ -77,10 +78,10 @@ public class CardService {
         cardDetail.setUrl(urlDetail.getUrl());
         cardDetail.setShortUrl(urlDetail.getShortUrl());
 
-        if(favorite) {
+        if (favorite) {
             markFavorite(user.getId(), card.getId());
         } else {
-            cardDao.unmarkFavorite(user.getId(), card.getId());
+            cardDao.deleteFavorite(user.getId(), card.getId());
         }
         cardDetail.setFavorite(favorite);
         return cardDetail;
@@ -96,4 +97,5 @@ public class CardService {
     public void deleteCard(int cardId) {
         cardDao.deleteCard(cardId);
     }
+
 }

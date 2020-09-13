@@ -18,19 +18,26 @@ public class GroupController {
     @Autowired
     GroupService groupService;
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<GroupContextResponseListDto> getAllGroups() {
         GroupContextResponseListDto groupContextResponseListDto = new GroupContextResponseListDto();
         groupContextResponseListDto.setGroupContextResponseDtoList(groupMapper.map(groupService.findAllGroups()));
         return ResponseEntity.ok(groupContextResponseListDto);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/group/{id}")
     public ResponseEntity<GroupContextResponseDto> getGroupById(@PathVariable int id) {
         return ResponseEntity.ok(groupMapper.map(groupService.findGroupById(id)));
     }
 
-    @GetMapping("checkAdmin")
+    @GetMapping("/admins/{groupId}")
+    public ResponseEntity<GroupAdminResponseDtoList> findGroupAdmins(@PathVariable int groupId) {
+        GroupAdminResponseDtoList groupAdminResponseDtoList = new GroupAdminResponseDtoList();
+        groupAdminResponseDtoList.setGroupAdminResponseDtoList(groupMapper.mapAdmin(groupService.findAdminsByGroupID(groupId)));
+        return ResponseEntity.ok(groupAdminResponseDtoList);
+    }
+
+    @GetMapping("/checkAdmin")
     public ResponseEntity<GroupAdminPriviligeDto> checkAdmin(@RequestParam(value = "groupId", required = true) int groupId) {
         GroupAdminPriviligeDto groupAdminPriviligeDto = new GroupAdminPriviligeDto();
         groupAdminPriviligeDto.setIsGroupAdmin(groupService.checkAdmin(groupId));
