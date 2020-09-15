@@ -120,4 +120,9 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
                 .execute();
     }
 
+    public boolean isCreatedByUser(int userId) {
+        return context.fetchExists(
+                context.selectFrom(Tables.CARD)
+                        .where(CARD.CREATOR.eq(userId)));
+    }
 }

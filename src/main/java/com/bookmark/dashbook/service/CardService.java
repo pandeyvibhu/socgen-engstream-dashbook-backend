@@ -21,32 +21,40 @@ public class CardService {
     @Autowired
     MyUserDetailsService userDetailsService;
     @Autowired
+    GroupService groupService;
+    @Autowired
     CardDao cardDao;
     @Autowired
     UrlShortnerDao urlShortenerDao;
 
+
     public List<CardDetail> findAll() {
-        return (appendFavoriteInfoToCardDetail(cardDao.findAllCards()));
+        return (appendExtraInfoToCardDetail(cardDao.findAllCards()));
     }
 
     public List<CardDetail> getCardsByGroupId(int groupId) {
-        return (appendFavoriteInfoToCardDetail(cardDao.getCardsByGroupId(groupId)));
+        return (appendExtraInfoToCardDetail(cardDao.getCardsByGroupId(groupId)));
     }
 
     public List<CardDetail> getCardsCreatedByUser() {
         User user = userDetailsService.getCurrentUserDetails();
-        return appendFavoriteInfoToCardDetail(cardDao.getCardsByCreatorId(user.getId()));
+        return appendExtraInfoToCardDetail(cardDao.getCardsByCreatorId(user.getId()));
     }
 
     public List<CardDetail> getFavoriteCards() {
         User user = userDetailsService.getCurrentUserDetails();
-        return appendFavoriteInfoToCardDetail(cardDao.getFavoriteCards(user.getId()));
+        return appendExtraInfoToCardDetail(cardDao.getFavoriteCards(user.getId()));
     }
 
-    private List<CardDetail> appendFavoriteInfoToCardDetail(List<CardDetail> cardDetailList) {
-        cardDetailList.stream().forEach(cardDetail -> {
+    private List<CardDetail> appendExtraInfoToCardDetail(List<CardDetail> cardDetailList) {
+        cardDetailList.forEach(cardDetail -> {
             User user = userDetailsService.getCurrentUserDetails();
             cardDetail.setFavorite(cardDao.isFavoriteCard(user.getId(), cardDetail.getId()));
+            if(cardDetail.getGroupId()==1 && cardDao.isCreatedByUser(user.getId())) {
+                cardDetail.setAuthority(true);
+            } else {
+                cardDetail.setAuthority(groupService.checkAdmin(cardDetail.getGroupId()));
+            }
         });
         return cardDetailList;
     }
@@ -65,6 +73,7 @@ public class CardService {
             markFavorite(user.getId(), card.getId());
         }
 
+        cardDetail.setAuthority(true);
         return cardDetail;
     }
 
@@ -84,6 +93,7 @@ public class CardService {
             cardDao.deleteFavorite(user.getId(), card.getId());
         }
         cardDetail.setFavorite(favorite);
+        cardDetail.setAuthority(true);
         return cardDetail;
     }
 

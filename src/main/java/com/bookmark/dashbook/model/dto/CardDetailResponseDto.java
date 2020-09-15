@@ -11,5 +11,6 @@ public class CardDetailResponseDto {
     private String status;
     private Integer groupId;
     private Boolean favorite;
+    private Boolean authority;
     private byte[]  icon;
 }

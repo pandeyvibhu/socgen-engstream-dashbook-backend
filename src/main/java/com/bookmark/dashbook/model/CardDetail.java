@@ -16,4 +16,6 @@ public class CardDetail {
     private byte[]  icon;
     //favorites table field
     private Boolean favorite;
+    //Authority
+    private Boolean authority;
 }
