@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class CardDetailResponseDto {
+    private Integer id;
     private String url;
     private String shortUrl;
     private String description;
@@ -12,5 +13,6 @@ public class CardDetailResponseDto {
     private Integer groupId;
     private Boolean favorite;
     private Boolean authority;
+    private Boolean isCreator;
     private byte[]  icon;
 }

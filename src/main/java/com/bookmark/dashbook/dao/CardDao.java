@@ -30,7 +30,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
 
     public List<CardDetail> findAllCards() {
         return context.select(
-                Tables.CARD.ID, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
+                Tables.CARD.ID, Tables.CARD.CREATOR, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
                 Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
                 .from(Tables.CARD)
                 .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))
@@ -39,7 +39,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
 
     public List<CardDetail> getCardsByGroupId(int groupId) {
         return context.select(
-                Tables.CARD.ID, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
+                Tables.CARD.ID, Tables.CARD.CREATOR, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
                 Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
                 .from(Tables.CARD)
                 .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))
@@ -49,7 +49,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
 
     public List<CardDetail> getCardsByCreatorId(int creatorId) {
         return context.select(
-                Tables.CARD.ID, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
+                Tables.CARD.ID, Tables.CARD.CREATOR, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
                 Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
                 .from(Tables.CARD)
                 .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))
@@ -59,7 +59,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
 
     public List<CardDetail> getFavoriteCards(int userId) {
         return context.select(
-                Tables.CARD.ID, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
+                Tables.CARD.ID, Tables.CARD.CREATOR, Tables.CARD.DESCRIPTION, Tables.CARD.TITLE, Tables.CARD.ICON, Tables.CARD.STATUS,
                 Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
                 .from(Tables.CARD)
                 .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))

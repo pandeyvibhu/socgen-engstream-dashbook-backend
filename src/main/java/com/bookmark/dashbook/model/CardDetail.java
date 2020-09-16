@@ -13,9 +13,11 @@ public class CardDetail {
     private String title;
     private String status;
     private Integer groupId;
+    private Integer creator;
     private byte[]  icon;
     //favorites table field
     private Boolean favorite;
     //Authority
     private Boolean authority;
+    private Boolean isCreator;
 }

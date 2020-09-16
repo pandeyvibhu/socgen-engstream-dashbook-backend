@@ -50,6 +50,7 @@ public class CardService {
         cardDetailList.forEach(cardDetail -> {
             User user = userDetailsService.getCurrentUserDetails();
             cardDetail.setFavorite(cardDao.isFavoriteCard(user.getId(), cardDetail.getId()));
+            cardDetail.setIsCreator(cardDetail.getCreator().equals(user.getId()));
             if(cardDetail.getGroupId()==1 && cardDao.isCreatedByUser(user.getId())) {
                 cardDetail.setAuthority(true);
             } else {

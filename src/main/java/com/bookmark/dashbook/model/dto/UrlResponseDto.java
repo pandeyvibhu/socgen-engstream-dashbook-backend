@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class UrlResponseDto {
-    private int id;
+    private Integer id;
     private String url;
     private String shortUrl;
     private LocalDateTime creationTime;
