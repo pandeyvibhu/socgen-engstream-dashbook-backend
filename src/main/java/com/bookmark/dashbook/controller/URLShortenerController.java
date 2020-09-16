@@ -7,6 +7,7 @@ import com.bookmark.dashbook.service.UrlShortenerService;
 import com.dashbook.bookmark.jooq.model.tables.pojos.UrlDetail;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class URLShortenerController {
     }
 
     @PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UrlResponseDto> createTinyUrl(@RequestBody UrlRequestDto urlDto) {
         UrlDetail urlDetail = urlShortenerService.saveUrl(urlMapper.map(urlDto));
         return ResponseEntity.ok(urlMapper.map(urlDetail));

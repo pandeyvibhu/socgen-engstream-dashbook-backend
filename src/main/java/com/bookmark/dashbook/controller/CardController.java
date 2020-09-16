@@ -2,16 +2,14 @@ package com.bookmark.dashbook.controller;
 
 import com.bookmark.dashbook.mapper.CardMapper;
 import com.bookmark.dashbook.model.CardDetail;
-import com.bookmark.dashbook.model.dto.CardDetailRequestDto;
-import com.bookmark.dashbook.model.dto.CardDetailResponseDto;
-import com.bookmark.dashbook.model.dto.CardDetailResponseListDto;
-import com.bookmark.dashbook.model.dto.ModifiedCardRequestDto;
+import com.bookmark.dashbook.model.dto.*;
 import com.bookmark.dashbook.service.CardService;
 import com.bookmark.dashbook.service.UrlShortenerService;
 import com.dashbook.bookmark.jooq.model.tables.pojos.Card;
 import com.dashbook.bookmark.jooq.model.tables.pojos.UrlDetail;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +47,7 @@ public class CardController {
     }
 
     @PostMapping(value = "/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CardDetailResponseDto> createCard(@RequestBody CardDetailRequestDto cardDetailDto) {
         Card card = cardMapper.mapCardDto(cardDetailDto);
         boolean favorite = cardDetailDto.getFavorite();
@@ -65,9 +64,9 @@ public class CardController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCard(@PathVariable   int id) {
+    public ResponseEntity<GenericMessageDto> deleteCard(@PathVariable int id) {
         cardService.deleteCard(id);
-        return ResponseEntity.ok("Card deleted");
+        return ResponseEntity.ok(new GenericMessageDto("Card deleted successfully"));
     }
 
     private CardDetailResponseListDto getResponseListDtoFromDetailList(List<CardDetail> cardDetailList) {

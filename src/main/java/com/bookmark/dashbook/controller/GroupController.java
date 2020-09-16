@@ -9,6 +9,7 @@ import com.bookmark.dashbook.service.GroupService;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,26 +60,28 @@ public class GroupController {
     }
 
     @PostMapping(value = "/save")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<GroupContextResponseDto> saveGroup(@RequestBody GroupContextRequestDto groupContextRequestDto) {
         GroupDetail groupDetail = groupService.saveGroup(groupMapper.map(groupContextRequestDto));
         return ResponseEntity.ok(groupMapper.map(groupDetail));
     }
 
     @PostMapping("/admin/save")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<GroupAdminResponseDto> addGroupAdmin(@RequestBody GroupAdminRequestDto groupAdminRequestDto) {
         GroupAdmin groupAdmin = groupService.saveAdmin(groupMapper.map(groupAdminRequestDto));
         return ResponseEntity.ok(groupMapper.map(groupAdmin));
     }
 
     @DeleteMapping("/delete-context{id}")
-    public ResponseEntity<String> deleteGroup(@PathVariable int id) {
+    public ResponseEntity<GenericMessageDto> deleteGroup(@PathVariable int id) {
         groupService.deleteGroup(id);
-        return ResponseEntity.ok("Card deleted");
+        return ResponseEntity.ok(new GenericMessageDto("Context Group deleted successfully"));
     }
 
     @DeleteMapping("/delete-admin{id}")
-    ResponseEntity<String> deleteGroupAdmin(@PathVariable int id) {
+    ResponseEntity<GenericMessageDto> deleteGroupAdmin(@PathVariable int id) {
         groupService.deleteGroupAdmin(id);
-        return ResponseEntity.ok("Card deleted");
+        return ResponseEntity.ok(new GenericMessageDto("Context admin deleted successfully"));
     }
 }
