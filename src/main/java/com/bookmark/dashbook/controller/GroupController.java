@@ -2,11 +2,11 @@ package com.bookmark.dashbook.controller;
 
 import com.bookmark.dashbook.mapper.CardMapper;
 import com.bookmark.dashbook.mapper.GroupMapper;
+import com.bookmark.dashbook.model.GroupDetail;
 import com.bookmark.dashbook.model.dto.*;
 import com.bookmark.dashbook.service.CardService;
 import com.bookmark.dashbook.service.GroupService;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
-import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +52,7 @@ public class GroupController {
     }
 
     @GetMapping("/checkAdmin")
-    public ResponseEntity<GroupAdminPriviligeDto> checkAdmin(@RequestParam(value = "groupId", required = true) int groupId) {
+    public ResponseEntity<GroupAdminPriviligeDto> checkAdmin(@RequestParam(value = "groupId") int groupId) {
         GroupAdminPriviligeDto groupAdminPriviligeDto = new GroupAdminPriviligeDto();
         groupAdminPriviligeDto.setIsGroupAdmin(groupService.checkAdmin(groupId));
         return ResponseEntity.ok(groupAdminPriviligeDto);
@@ -60,11 +60,11 @@ public class GroupController {
 
     @PostMapping(value = "/save")
     public ResponseEntity<GroupContextResponseDto> saveGroup(@RequestBody GroupContextRequestDto groupContextRequestDto) {
-        GroupContext groupContext = groupService.saveGroup(groupMapper.map(groupContextRequestDto));
-        return ResponseEntity.ok(groupMapper.map(groupContext));
+        GroupDetail groupDetail = groupService.saveGroup(groupMapper.map(groupContextRequestDto));
+        return ResponseEntity.ok(groupMapper.map(groupDetail));
     }
 
-    @PostMapping("/admin/add")
+    @PostMapping("/admin/save")
     public ResponseEntity<GroupAdminResponseDto> addGroupAdmin(@RequestBody GroupAdminRequestDto groupAdminRequestDto) {
         GroupAdmin groupAdmin = groupService.saveAdmin(groupMapper.map(groupAdminRequestDto));
         return ResponseEntity.ok(groupMapper.map(groupAdmin));

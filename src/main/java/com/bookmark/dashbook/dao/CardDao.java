@@ -63,7 +63,7 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
                 Tables.CARD.GROUP_ID, Tables.URL_DETAIL.SHORT_URL, Tables.URL_DETAIL.URL)
                 .from(Tables.CARD)
                 .join(Tables.URL_DETAIL).on(Tables.CARD.URL_DETAIL_ID.eq(Tables.URL_DETAIL.ID))
-                .join(FAVORITES).on(Tables.CARD.ID.eq(FAVORITES.CARD_ID).and(Tables.URL_DETAIL.ID.eq(FAVORITES.CARD_ID)))
+                .join(FAVORITES).on(Tables.CARD.ID.eq(FAVORITES.CARD_ID))
                 .where(FAVORITES.USER_ID.eq(userId))
                 .fetchInto(CardDetail.class);
     }
@@ -85,10 +85,10 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
             context.deleteFrom(FAVORITES)
                     .where(FAVORITES.CARD_ID.eq(cardId))
                     .execute();
+            delete(card);
             context.deleteFrom(Tables.URL_DETAIL)
                     .where(Tables.URL_DETAIL.ID.eq(card.getUrlDetailId()))
                     .execute();
-            delete(card);
         }
     }
 
@@ -111,7 +111,9 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
         context.insertInto(FAVORITES)
                 .set(favoritesRecord)
                 .onConflict(FAVORITES.CARD_ID, FAVORITES.USER_ID)
-                .doUpdate();
+                .doNothing()
+                .execute();
+
     }
 
     public void deleteFavorite(int userId, int cardId) {

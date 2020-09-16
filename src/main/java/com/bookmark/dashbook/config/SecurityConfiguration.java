@@ -31,6 +31,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	private static String[] urlPatterns = {
 			"/auth/register",
 			"/auth/login",
+			"/tiny/**",
 			"/v3/api-docs/**",
 			"/swagger-ui.html",
 			"/swagger-ui/**"

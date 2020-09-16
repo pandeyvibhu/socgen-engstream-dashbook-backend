@@ -11,8 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
-@RequestMapping("/url")
+@RequestMapping("/tiny")
 public class URLShortenerController {
 
     private final UrlMapper urlMapper = Mappers.getMapper(UrlMapper.class);
@@ -20,16 +23,14 @@ public class URLShortenerController {
     @Autowired
     UrlShortenerService urlShortenerService;
 
-    @GetMapping(value = "/get")
-    public ResponseEntity<UrlResponseDto> getLongUrl(@RequestParam String shortUrl) {
-        return ResponseEntity.ok(urlMapper.map(urlShortenerService.getUrlDetail(shortUrl)));
+    @GetMapping("/{hashValue}")
+    public void getLongUrl(HttpServletResponse httpServletResponse, @PathVariable("hashValue") String hashValue) throws IOException {
+        httpServletResponse.sendRedirect(urlShortenerService.getUrlDetail(hashValue).getUrl());
     }
 
     @PostMapping(value = "/save", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UrlResponseDto> createTinyUrl(@RequestBody UrlRequestDto urlDto) {
         UrlDetail urlDetail = urlShortenerService.saveUrl(urlMapper.map(urlDto));
         return ResponseEntity.ok(urlMapper.map(urlDetail));
-
     }
-
 }

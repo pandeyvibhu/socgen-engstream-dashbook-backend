@@ -8,4 +8,5 @@ public class GroupContextResponseDto {
     private String  title;
     private String  description;
     private String  groupType;
+    private Boolean authority;
 }

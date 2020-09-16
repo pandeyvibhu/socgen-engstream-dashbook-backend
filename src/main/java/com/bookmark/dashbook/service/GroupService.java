@@ -2,10 +2,13 @@ package com.bookmark.dashbook.service;
 
 import com.bookmark.dashbook.dao.GroupAdminDao;
 import com.bookmark.dashbook.dao.GroupDao;
+import com.bookmark.dashbook.mapper.GroupMapper;
+import com.bookmark.dashbook.model.GroupDetail;
 import com.bookmark.dashbook.model.dto.GroupAdminResponseDto;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
 import com.dashbook.bookmark.jooq.model.tables.pojos.User;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,32 +26,59 @@ public class GroupService {
     @Autowired
     GroupAdminDao groupAdminDao;
 
-    public List<GroupContext> findAllGroups() {
-        return groupDao.findAll();
+    private final GroupMapper groupMapper = Mappers.getMapper(GroupMapper.class);
+
+    public List<GroupDetail> findAllGroups() {
+        return enrichAuthorityInfo(groupDao.findAll());
     }
 
-    public GroupContext findGroupById(int groupId) {
-        return groupDao.findById(groupId);
+    public GroupDetail findGroupById(int groupId) {
+        return enrichAuthorityInfo(groupDao.findById(groupId));
     }
 
     public List<GroupAdmin> findAdminsByGroupID(int groupId) {
         return groupDao.findAdminsByGroupId(groupId);
     }
 
-    public GroupContext saveGroup(GroupContext group) {
+    public GroupDetail saveGroup(GroupContext group) {
+        boolean ifGroupCreation = (group.getId()==null);
+        GroupDetail groupDetail;
         User user = userDetailsService.getCurrentUserDetails();
-        group.setCreator(user.getId());
+
+        if(ifGroupCreation) {
+            group.setCreator(user.getId());
+        }
         group = groupDao.upsert(group);
 
-        GroupAdmin groupAdmin = new GroupAdmin();
-        groupAdmin.setGroupId(group.getId());
-        groupAdmin.setUserId(user.getId());
-        groupAdminDao.upsert(groupAdmin);
-        return group;
+        //Update the Group Creator as Group Admin
+        if(ifGroupCreation) {
+            GroupAdmin groupAdmin = new GroupAdmin();
+            groupAdmin.setGroupId(group.getId());
+            groupAdmin.setUserId(user.getId());
+            groupAdminDao.upsert(groupAdmin);
+        }
+
+        groupDetail = groupMapper.map(group);
+        groupDetail.setAuthority(true);
+        return groupDetail;
     }
 
     public GroupAdmin saveAdmin(GroupAdmin groupAdmin) {
         return groupAdminDao.upsert(groupAdmin);
+    }
+
+    GroupDetail enrichAuthorityInfo(GroupContext groupContext){
+        GroupDetail groupDetail = groupMapper.map(groupContext);
+        groupDetail.setAuthority(checkAdmin(groupContext.getId()));
+        return groupDetail;
+    }
+
+    List<GroupDetail> enrichAuthorityInfo(List<GroupContext> groupContextList){
+        List<GroupDetail> groupDetailList= groupMapper.mapGroup(groupContextList);
+        groupDetailList.forEach(groupDetail -> {
+            groupDetail.setAuthority(checkAdmin(groupDetail.getId()));
+        });
+        return groupDetailList;
     }
 
     public Boolean checkAdmin(int groupId) {
