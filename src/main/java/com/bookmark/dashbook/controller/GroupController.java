@@ -73,7 +73,7 @@ public class GroupController {
         return ResponseEntity.ok(groupMapper.map(groupAdmin));
     }
 
-    @DeleteMapping("/delete-context{id}")
+    @DeleteMapping("/delete-context/{id}")
     public ResponseEntity<GenericMessageDto> deleteGroup(@PathVariable int id) {
         groupService.deleteGroup(id);
         return ResponseEntity.ok(new GenericMessageDto("Context Group deleted successfully"));

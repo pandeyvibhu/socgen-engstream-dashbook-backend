@@ -43,9 +43,6 @@ public class GroupDao extends DAOImpl<GroupContextRecord, GroupContext, Integer>
 
         return context.insertInto(GROUP_CONTEXT)
                 .set(groupContextRecord)
-                .onConflict(GROUP_CONTEXT.TITLE)
-                .doUpdate()
-                .set(groupContextRecord)
                 .returning(GROUP_CONTEXT.ID, GROUP_CONTEXT.CREATOR, GROUP_CONTEXT.GROUP_TYPE,
                         GROUP_CONTEXT.TITLE, GROUP_CONTEXT.DESCRIPTION)
                 .fetchOne()

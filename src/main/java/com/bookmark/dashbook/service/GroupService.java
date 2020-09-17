@@ -47,8 +47,10 @@ public class GroupService {
 
         if(ifGroupCreation) {
             group.setCreator(user.getId());
+            group = groupDao.upsert(group);
+        } else {
+            groupDao.update(group);
         }
-        group = groupDao.upsert(group);
 
         //Update the Group Creator as Group Admin
         if(ifGroupCreation) {
