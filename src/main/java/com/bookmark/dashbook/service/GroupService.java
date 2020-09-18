@@ -4,6 +4,7 @@ import com.bookmark.dashbook.dao.CardDao;
 import com.bookmark.dashbook.dao.GroupAdminDao;
 import com.bookmark.dashbook.dao.GroupDao;
 import com.bookmark.dashbook.mapper.GroupMapper;
+import com.bookmark.dashbook.model.GroupAdminDetail;
 import com.bookmark.dashbook.model.GroupDetail;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
@@ -41,7 +42,7 @@ public class GroupService {
         return enrichAuthorityInfo(groupDao.findById(groupId));
     }
 
-    public List<GroupAdmin> findAdminsByGroupID(int groupId) {
+    public List<GroupAdminDetail> findAdminsByGroupID(int groupId) {
         return groupDao.findAdminsByGroupId(groupId);
     }
 

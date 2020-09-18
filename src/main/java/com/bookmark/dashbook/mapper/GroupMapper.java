@@ -1,5 +1,6 @@
 package com.bookmark.dashbook.mapper;
 
+import com.bookmark.dashbook.model.GroupAdminDetail;
 import com.bookmark.dashbook.model.GroupDetail;
 import com.bookmark.dashbook.model.dto.GroupAdminRequestDto;
 import com.bookmark.dashbook.model.dto.GroupAdminResponseDto;
@@ -15,6 +16,8 @@ import java.util.List;
 public interface GroupMapper {
     GroupContext map(GroupContextRequestDto groupContextRequestDto);
 
+    GroupAdminResponseDto map(GroupAdminDetail groupAdminDetail);
+
     GroupDetail map(GroupContext groupContext);
 
     GroupContextResponseDto map(GroupDetail groupDetail);
@@ -27,6 +30,5 @@ public interface GroupMapper {
 
     List<GroupContextResponseDto> map(List<GroupDetail> groupDetailList);
 
-    List<GroupAdminResponseDto> mapAdmin(List<GroupAdmin> groupAdmins);
-
+    List<GroupAdminResponseDto> mapAdmins(List<GroupAdminDetail> groupAdminDetailList);
 }

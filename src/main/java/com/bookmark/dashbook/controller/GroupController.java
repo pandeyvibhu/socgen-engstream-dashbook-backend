@@ -48,7 +48,7 @@ public class GroupController {
     @GetMapping("/{groupId}/admins")
     public ResponseEntity<GroupAdminResponseDtoList> findGroupAdmins(@PathVariable int groupId) {
         GroupAdminResponseDtoList groupAdminResponseDtoList = new GroupAdminResponseDtoList();
-        groupAdminResponseDtoList.setGroupAdminResponseDtoList(groupMapper.mapAdmin(groupService.findAdminsByGroupID(groupId)));
+        groupAdminResponseDtoList.setGroupAdminResponseDtoList(groupMapper.mapAdmins(groupService.findAdminsByGroupID(groupId)));
         return ResponseEntity.ok(groupAdminResponseDtoList);
     }
 

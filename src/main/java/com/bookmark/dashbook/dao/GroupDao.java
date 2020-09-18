@@ -1,5 +1,6 @@
 package com.bookmark.dashbook.dao;
 
+import com.bookmark.dashbook.model.GroupAdminDetail;
 import com.bookmark.dashbook.service.CardService;
 import com.dashbook.bookmark.jooq.model.Tables;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
@@ -24,10 +25,13 @@ public class GroupDao extends DAOImpl<GroupContextRecord, GroupContext, Integer>
         this.context = context;
     }
 
-    public List<GroupAdmin> findAdminsByGroupId(int groupId) {
-        return context.selectFrom(GROUP_ADMIN)
+    public List<GroupAdminDetail> findAdminsByGroupId(int groupId) {
+        return context.select(GROUP_ADMIN.GROUP_ID, Tables.USER.ID, Tables.USER.FIRSTNAME, Tables.USER.LASTNAME,
+                Tables.USER.EMAIL, Tables.USER.USERNAME)
+                .from(GROUP_ADMIN)
+                .join(Tables.USER).on(Tables.USER.ID.eq(GROUP_ADMIN.USER_ID))
                 .where(GROUP_ADMIN.GROUP_ID.eq(groupId))
-                .fetchInto(GroupAdmin.class);
+                .fetchInto(GroupAdminDetail.class);
     }
 
     public Boolean checkGroupAdmin(int userId, int groupId) {
