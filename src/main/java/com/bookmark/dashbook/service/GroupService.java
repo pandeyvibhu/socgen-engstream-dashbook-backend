@@ -31,8 +31,10 @@ public class GroupService {
 
     private final GroupMapper groupMapper = Mappers.getMapper(GroupMapper.class);
 
+    private int exclusionGroupId = 0;
+
     public List<GroupDetail> findUserGroups() {
-        return enrichAuthorityInfo(groupDao.findUserGroups());
+        return enrichAuthorityInfo(groupDao.findUserGroups(exclusionGroupId));
     }
 
     public GroupDetail findGroupById(int groupId) {

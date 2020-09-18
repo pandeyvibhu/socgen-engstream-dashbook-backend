@@ -53,9 +53,9 @@ public class GroupDao extends DAOImpl<GroupContextRecord, GroupContext, Integer>
         return groupContext.getId();
     }
 
-    public List<GroupContext> findUserGroups() {
+    public List<GroupContext> findUserGroups(int exclusionId) {
         return context.selectFrom(Tables.GROUP_CONTEXT)
-                .where(GROUP_ADMIN.GROUP_ID.eq(CardService.DEFAULT_GROUP_ID).not())
+                .where(GROUP_CONTEXT.ID.eq(exclusionId).not())
                 .fetchInto(GroupContext.class);
     }
 }
