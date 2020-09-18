@@ -1,10 +1,10 @@
 package com.bookmark.dashbook.service;
 
+import com.bookmark.dashbook.dao.CardDao;
 import com.bookmark.dashbook.dao.GroupAdminDao;
 import com.bookmark.dashbook.dao.GroupDao;
 import com.bookmark.dashbook.mapper.GroupMapper;
 import com.bookmark.dashbook.model.GroupDetail;
-import com.bookmark.dashbook.model.dto.GroupAdminResponseDto;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
 import com.dashbook.bookmark.jooq.model.tables.pojos.User;
@@ -24,12 +24,15 @@ public class GroupService {
     GroupDao groupDao;
 
     @Autowired
+    CardDao cardDao;
+
+    @Autowired
     GroupAdminDao groupAdminDao;
 
     private final GroupMapper groupMapper = Mappers.getMapper(GroupMapper.class);
 
-    public List<GroupDetail> findAllGroups() {
-        return enrichAuthorityInfo(groupDao.findAll());
+    public List<GroupDetail> findUserGroups() {
+        return enrichAuthorityInfo(groupDao.findUserGroups());
     }
 
     public GroupDetail findGroupById(int groupId) {
@@ -89,6 +92,7 @@ public class GroupService {
     }
 
     public void deleteGroup(int groupId) {
+        cardDao.updateCardsGroupId(groupId);
         groupAdminDao.deleteByGroupId(groupId);
         groupDao.deleteById(groupId);
     }

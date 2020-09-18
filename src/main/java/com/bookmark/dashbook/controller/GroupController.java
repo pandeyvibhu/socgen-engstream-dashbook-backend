@@ -29,7 +29,7 @@ public class GroupController {
     @GetMapping("/all")
     public ResponseEntity<GroupContextResponseListDto> getAllGroups() {
         GroupContextResponseListDto groupContextResponseListDto = new GroupContextResponseListDto();
-        groupContextResponseListDto.setGroupContextResponseDtoList(groupMapper.map(groupService.findAllGroups()));
+        groupContextResponseListDto.setGroupContextResponseDtoList(groupMapper.map(groupService.findUserGroups()));
         return ResponseEntity.ok(groupContextResponseListDto);
     }
 

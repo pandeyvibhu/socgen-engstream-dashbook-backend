@@ -92,6 +92,14 @@ public class CardDao extends DAOImpl<CardRecord, Card, Integer> {
         }
     }
 
+    //Disassociate card from group
+    public void updateCardsGroupId(int groupId) {
+        context.update(Tables.CARD)
+                .set(Tables.CARD.GROUP_ID, 1)
+                .where(Tables.CARD.GROUP_ID.eq(groupId))
+                .execute();
+    }
+
     @Override
     public Integer getId(Card card) {
         return card.getId();

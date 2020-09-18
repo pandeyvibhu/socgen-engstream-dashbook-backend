@@ -27,6 +27,7 @@ public class CardService {
     @Autowired
     UrlShortnerDao urlShortenerDao;
 
+    public static final Integer DEFAULT_GROUP_ID = 0;
 
     public List<CardDetail> findAll() {
         return (appendExtraInfoToCardDetail(cardDao.findAllCards()));
@@ -50,8 +51,8 @@ public class CardService {
         cardDetailList.forEach(cardDetail -> {
             User user = userDetailsService.getCurrentUserDetails();
             cardDetail.setFavorite(cardDao.isFavoriteCard(user.getId(), cardDetail.getId()));
-            cardDetail.setIsCreator(cardDetail.getCreator().equals(user.getId()));
-            if(cardDetail.getGroupId()==1 && cardDao.isCreatedByUser(user.getId())) {
+            cardDetail.setIsCreator(cardDao.isCreatedByUser(user.getId()));
+            if(cardDetail.getGroupId().equals(DEFAULT_GROUP_ID) && cardDetail.getCreator().equals(user.getId())) {
                 cardDetail.setAuthority(true);
             } else {
                 cardDetail.setAuthority(groupService.checkAdmin(cardDetail.getGroupId()));

@@ -1,5 +1,7 @@
 package com.bookmark.dashbook.dao;
 
+import com.bookmark.dashbook.service.CardService;
+import com.dashbook.bookmark.jooq.model.Tables;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupAdmin;
 import com.dashbook.bookmark.jooq.model.tables.pojos.GroupContext;
 import com.dashbook.bookmark.jooq.model.tables.records.GroupContextRecord;
@@ -7,10 +9,7 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DAOImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-
-import static com.dashbook.bookmark.jooq.model.Tables.FAVORITES;
 import static com.dashbook.bookmark.jooq.model.Tables.GROUP_ADMIN;
 import static com.dashbook.bookmark.jooq.model.tables.GroupContext.GROUP_CONTEXT;
 
@@ -54,4 +53,9 @@ public class GroupDao extends DAOImpl<GroupContextRecord, GroupContext, Integer>
         return groupContext.getId();
     }
 
+    public List<GroupContext> findUserGroups() {
+        return context.selectFrom(Tables.GROUP_CONTEXT)
+                .where(GROUP_ADMIN.GROUP_ID.eq(CardService.DEFAULT_GROUP_ID).not())
+                .fetchInto(GroupContext.class);
+    }
 }
