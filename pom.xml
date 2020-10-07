@@ -148,7 +148,7 @@
 				</executions>
 				<configuration>
 					<driver>com.mysql.cj.jdbc.Driver</driver>
-					<url>jdbc:mysql://database-1.ciebyho9uvwj.ap-south-1.rds.amazonaws.com/dashbook</url>
+					<url>jdbc:mysql://database-2.ciebyho9uvwj.ap-south-1.rds.amazonaws.com/dashbook</url>
 					<user>admin</user>
 					<password>admin123</password>
 					<schemas>dashbook</schemas>
@@ -173,7 +173,7 @@
 						<configuration>
 							<jdbc>
 								<driver>com.mysql.cj.jdbc.Driver</driver>
-								<url>jdbc:mysql://database-1.ciebyho9uvwj.ap-south-1.rds.amazonaws.com/dashbook</url>
+								<url>jdbc:mysql://database-2.ciebyho9uvwj.ap-south-1.rds.amazonaws.com/dashbook</url>
 								<user>admin</user>
 								<password>admin123</password>
 							</jdbc>
