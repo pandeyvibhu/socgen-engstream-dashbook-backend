@@ -32,6 +32,52 @@
 
 <img src="images/pipeline.PNG">
 
+## Running the Backend
+
+To run the backend server locally, you'll need the following prerequisites installed:
+
+*   **Java 11:** Make sure you have JDK 11 installed.
+*   **Maven:** Apache Maven is used for building and managing the project.
+
+There are two primary ways to run the backend:
+
+### 1. Using Maven Spring Boot Plugin
+
+This is the simplest way to run the application during development:
+
+```bash
+mvn spring-boot:run
+```
+
+The application will start, and by default, it will be accessible at `http://localhost:8080`.
+
+### 2. Using the Packaged JAR
+
+First, you need to package the application into an executable JAR file:
+
+```bash
+mvn package
+```
+
+Once the packaging is successful, you will find the JAR file in the `target` directory (e.g., `target/dashbook-api-0.0.1-SNAPSHOT.jar`). You can run it using:
+
+```bash
+java -jar target/dashbook-api-0.0.1-SNAPSHOT.jar
+```
+
+The application will start and be accessible at `http://localhost:8080`.
+
+### Database Configuration
+
+The application requires a MySQL database to function.
+
+*   The default database connection details are configured in `src/main/resources/application.properties` and point to an AWS RDS instance: `jdbc:mysql://database-2.ciebyho9uvwj.ap-south-1.rds.amazonaws.com/dashbook`.
+*   **Important:** If you do not have access to this specific RDS instance or prefer to use a local MySQL server, you will need to:
+    1.  Ensure your MySQL server is running.
+    2.  Create a database (e.g., `dashbook`).
+    3.  Update the `spring.datasource.url`, `spring.datasource.username`, and `spring.datasource.password` properties in `src/main/resources/application.properties` to point to your local database.
+*   The application uses Flyway for database migrations. Upon startup, Flyway will automatically attempt to migrate the database schema to the required version if it can successfully connect to the database specified in `application.properties`.
+
 ****
 
 There are many relations logical relations between different moving parts of the application.
